@@ -1,0 +1,47 @@
+{% extends 'adminlte/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Lista de Citas</h1>
+
+    <table class="table mt-4" id="citas-table">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Fecha de la Cita</th>
+                <th>Hora de la Cita</th>
+                <th>Motivo de Consulta</th>
+                <th>Estado</th>
+                <th>Asistió</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in object_list %}
+            <tr>
+                <td>{{ cita.usuario }}</td>
+                <td>{{ cita.medico }}</td>
+                <td>{{ cita.fecha_cita }}</td>
+                <td>{{ cita.hora_cita }}</td>
+                <td>{{ cita.motivo_consulta }}</td>
+                <td>{{ cita.estado }}</td>
+                <td>{{ cita.asistio|yesno:"Sí,No" }}</td>
+                <td>
+                    <a href="{% url 'editar_cita' cita.pk %}" class="btn btn-primary"><i class="fas fa-edit"></i>Editar</a>
+                    <a href="{% url 'eliminar_cita' cita.pk %}" class="btn btn-danger"><i class="fas fa-times"></i>Eliminar</a>
+                </td>
+                <td>
+                    {% if cita.asistio and cita.estado == 'Pendiente' %}
+                        <form method="post" action="{% url 'completar_cita' cita.pk %}">
+                            {% csrf_token %}
+                            <input type="submit" value="Completar Cita">
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

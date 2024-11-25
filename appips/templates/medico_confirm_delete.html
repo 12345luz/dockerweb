@@ -1,0 +1,12 @@
+{% extends 'adminlte/base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás seguro de que quieres eliminar al médico {{ object }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'listar_medicos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

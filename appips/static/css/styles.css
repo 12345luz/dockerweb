@@ -1,0 +1,59 @@
+.logo-size {
+    width: 70px !important;
+    height: auto !important;
+    
+}
+
+.image {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    flex-direction: column;  /* Alinea la imagen y el texto en una columna */
+    text-align: center;      /* Alinea el texto de manera centrada */
+}
+
+.main-sidebar {
+    background-color: #2b649d !important; /* Cambia #2c3e50 por el color que desees */
+    border-right: 3px solid #000000; /* Agregar un borde opcional */
+}
+
+/* Aplica un ancho fijo y alinea el contenido de la tabla */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* Centra texto en celdas */
+}
+
+/* Estilo para encabezados */
+.table th {
+    background-color: #f8f9fa; /* Color claro de fondo */
+    font-weight: bold; /* Negrita */
+    text-align: center; /* Centrar texto */
+    padding: 10px; /* Espaciado */
+    border: 1px solid #dee2e6; /* Borde */
+}
+
+/* Estilo para celdas */
+.table td {
+    padding: 8px; /* Espaciado */
+    border: 1px solid #dee2e6; /* Borde */
+}
+
+/* Opcional: Alinear texto de columnas específicas */
+.table td:nth-child(1) {
+    text-align: left; /* Usuario alineado a la izquierda */
+}
+
+.table td:nth-child(2),
+.table td:nth-child(3) {
+    text-align: center; /* Diagnóstico y fecha al centro */
+}
+
+/* Opcional: Estilo de botones */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    font-size: 14px;
+}

@@ -1,0 +1,96 @@
+{% extends 'adminlte/base.html' %}
+
+
+
+{% block content %}
+<div class="container mt-4">
+
+  <div class="card-header">
+    <h3 class="card-title">Formulario Médico de la ips</h3>
+  </div>
+
+  <div class="card">
+    
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="form-horizontal">
+        {% csrf_token %}
+
+
+        {# Mostrar errores no asociados a un campo específico #}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.numero_identificacion.id_for_label }}" class="form-label">Número de Identificación</label>
+              {{ form.numero_identificacion.errors }}
+              {{ form.numero_identificacion }}
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.tipo_identificacion.id_for_label }}" class="form-label">Tipo de Identificación</label>
+              {{ form.tipo_identificacion.errors }}
+              {{ form.tipo_identificacion }}
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.primer_nombre.id_for_label }}" class="form-label">Primer Nombre</label>
+              {{ form.primer_nombre.errors }}
+              {{ form.primer_nombre }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.segundo_nombre.id_for_label }}" class="form-label">Segundo Nombre</label>
+              {{ form.segundo_nombre.errors }}
+              {{ form.segundo_nombre }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.primer_apellido.id_for_label }}" class="form-label">Primer Apellido</label>
+              {{ form.primer_apellido.errors }}
+              {{ form.primer_apellido }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.segundo_apellido.id_for_label }}" class="form-label">Segundo Apellido</label>
+              {{ form.segundo_apellido.errors }}
+              {{ form.segundo_apellido }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.especialidad_medica.id_for_label }}" class="form-label">Especialidad medica</label>
+              {{ form.especialidad_medica.errors }}
+              {{ form.especialidad_medica }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+          <button type="submit" class="btn btn-primary  d-inline-block mr-2" style="width: 100px;">
+              <i class="fas fa-save"></i> Guardar
+          </button>
+          <a href="{% url 'listar_medicos' %}" class="btn btn-secondary  d-inline-block" style="width: 100px;">
+              <i class="fas fa-times"></i> Cancelar
+          </a>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

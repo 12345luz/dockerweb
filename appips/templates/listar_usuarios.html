@@ -1,0 +1,68 @@
+{% extends 'adminlte/base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Listar Usuarios</h1>
+
+    <input type="text" id="search-input" class="form-control custom-input" placeholder="Buscar por nombre, apellido o identificación...">
+    
+    <table class="table mt-4" id="usuarios-table">
+        <thead>
+            <tr>
+                <th>Tipo de Identificación</th>
+                <th>Número de Identificación</th>
+                <th>Primer Nombre</th>
+                <th>Segundo Nombre</th>
+                <th>Primer Apellido</th>
+                <th>Segundo Apellido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="usuarios-tbody">
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.get_tipo_identificacion_display }}</td>
+                <td>{{ usuario.numero_identificacion }}</td>
+                <td>{{ usuario.primer_nombre }}</td>
+                <td>{{ usuario.segundo_nombre }}</td>
+                <td>{{ usuario.primer_apellido }}</td>
+                <td>{{ usuario.segundo_apellido }}</td>
+                <td>
+                    <a href="{% url 'editar_usuario' usuario.numero_identificacion %}" class="btn btn-primary"> <i class="fas fa-edit"></i>Editar</a>
+                    <a href="{% url 'eliminar_usuario' usuario.numero_identificacion %}" class="btn btn-danger"><i class="fas fa-times"></i>Eliminar</a>
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('search-input').addEventListener('keyup', function() {
+    const query = this.value;
+    
+    fetch("{% url 'listar_usuarios' %}?q=" + query, {
+        headers: {
+            'x-requested-with': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById('usuarios-tbody');
+        tbody.innerHTML = '';  // Limpiar resultados anteriores
+        
+        data.usuarios.forEach(usuario => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${usuario.tipo_identificacion}
+                <td>${usuario.numero_identificacion}</td>
+                <td>${usuario.primer_nombre}</td>
+                <td>${usuario.segundo_nombre}</td>
+                <td>${usuario.primer_apellido}</td>
+                <td>${usuario.segundo_apellido}</td>        
+            `;
+            tbody.appendChild(row);
+        });
+    });
+});
+</script>
+{% endblock %}

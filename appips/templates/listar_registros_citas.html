@@ -1,0 +1,21 @@
+<h2>Registros de Citas para {{ historia.usuario }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cita in citas %}
+        <tr>
+            <td>{{ cita.fecha_cita }}</td>
+            <td>{{ cita.hora_cita }}</td>
+            <td>{{ cita.motivo_consulta }}</td>
+            <td>{{ cita.estado }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

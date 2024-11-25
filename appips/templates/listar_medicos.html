@@ -1,0 +1,70 @@
+{% extends 'adminlte/base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Lista de  Médicos</h1>
+
+    <input type="text" id="search-input" class="form-control custom-input" placeholder="Buscar por nombre, apellido o identificación...">
+    
+    <table class="table mt-4" id="medicos-table">
+        <thead>
+            <tr>
+                <th>Tipo de Identificación</th>
+                <th>Número de Identificación</th>
+                <th>Primer Nombre</th>
+                <th>Segundo Nombre</th>
+                <th>Primer Apellido</th>
+                <th>Especialidad médica</th>
+                
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="medicos-tbody">
+            {% for medico in medicos %}
+            <tr>
+                <td>{{ medico.get_tipo_identificacion_display }}</td>
+                <td>{{ medico.numero_identificacion }}</td>
+                <td>{{ medico.primer_nombre }}</td>
+                <td>{{ medico.segundo_nombre }}</td>
+                <td>{{ medico.primer_apellido }}</td>
+                <td>{{ medico.especialidad_medica }}</td>
+                <td>
+                    <a href="{% url 'editar_medico' medico.numero_identificacion %}" class="btn btn-primary"><i class="fas fa-edit"></i>Editar</a>
+                    <a href="{% url 'eliminar_medico' medico.numero_identificacion %}" class="btn btn-danger"><i class="fas fa-times"></i>Eliminar</a>
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('search-input').addEventListener('keyup', function() {
+    const query = this.value;
+    
+    fetch("{% url 'listar_medicos' %}?q=" + query, {
+        headers: {
+            'x-requested-with': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById('medicos-tbody');
+        tbody.innerHTML = '';  // Limpiar resultados anteriores
+        
+        data.usuarios.forEach(usuario => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${medico.tipo_identificacion}
+                <td>${medico.numero_identificacion}</td>
+                <td>${medico.primer_nombre}</td>
+                <td>${medico.segundo_nombre}</td>
+                <td>${medico.primer_apellido}</td>
+                <td>${medico.especialidad_medica}</td>        
+            `;
+            tbody.appendChild(row);
+        });
+    });
+});
+</script>
+{% endblock %}

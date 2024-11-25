@@ -1,0 +1,30 @@
+{% extends 'adminlte/base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<h2>Historias Clínicas</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Paciente</th>
+            <th>Fecha de registro</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for historia in historias_clinicas %}
+        <tr>
+            <td>{{ historia.usuario }}</td>
+            <td>{{ historia.fecha_creacion }}</td>
+            <td>
+                <a href="{% url 'detalle_historia_clinica' historia.pk %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye"></i> 
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+

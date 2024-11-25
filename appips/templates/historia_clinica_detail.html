@@ -1,0 +1,93 @@
+{% extends 'adminlte/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style>
+    body {
+        background-color: #e0e0e0; /* Cambia el color de fondo solo para esta página */
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/print.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+
+<div class="encabezado">
+    <h2>Historia Clínica</h2>
+    <img src="{% static 'img/logo.jpg' %}" alt="Logo de la IPS" class="logo">
+    <h1 class="titulo">Health IPS</h1>
+</div>
+
+<h5>Datos básicos</h5>
+<ul>
+    <li><strong>Nombre Completo:</strong> 
+        {{ historia_clinica.usuario.primer_nombre }} 
+        {{ historia_clinica.usuario.segundo_nombre }} 
+        {{ historia_clinica.usuario.primer_apellido }} 
+        {{ historia_clinica.usuario.segundo_apellido }}
+    </li>
+    <li><strong>Número de Identificación:</strong> {{ historia_clinica.usuario.numero_identificacion }}</li>
+    <li><strong>Tipo de Identificación:</strong> {{ historia_clinica.usuario.tipo_identificacion }}</li>
+    <li><strong>Fecha de Nacimiento:</strong> {{ historia_clinica.usuario.fecha_nacimiento }}</li>
+    <li><strong>Edad:</strong> {{ edad }} años</li>
+    <li><strong>Género:</strong> {{ historia_clinica.usuario.genero }}</li>
+</ul>
+
+
+<table class="table table-bordered" style="width: 100%; table-layout: fixed;">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+            <th>Diagnóstico</th>
+            <th>Tratamiento</th>
+            <th>Observaciones</th>
+            <th>Médico</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registro in registros_citas %}
+        <tr>
+            <td>{{ registro.cita.fecha_cita }}</td>
+            <td>{{ registro.cita.hora_cita }}</td>
+            <td>{{ registro.cita.motivo_consulta }}</td>
+            <td>{{ registro.cita.estado }}</td>
+            <td>{{ registro.diagnostico }}</td>
+            <td>{{ registro.tratamiento }}</td>
+            <td>{{ registro.observaciones }}</td>
+            <td>
+                {{ registro.cita.medico.primer_nombre }} 
+                {{ registro.cita.medico.segundo_nombre }} 
+                {{ registro.cita.medico.primer_apellido }} 
+                {{ registro.cita.medico.segundo_apellido }}
+                Especialidad:{{ registro.cita.medico.especialidad_medica }}
+            </td>
+            
+
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No hay registros de citas para esta historia clínica.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<button onclick="imprimirHistoriaClinica()" class="btn btn-primary no-imprimir">
+    <i class="fas fa-print"></i>
+</button>
+
+<script>
+    // Función para imprimir la historia clínica
+    function imprimirHistoriaClinica() {
+        window.print();
+    }
+</script>
+{% endblock %}
+
+
