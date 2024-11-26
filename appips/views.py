@@ -8,8 +8,8 @@ from django.urls import reverse_lazy
 from .models import *
 from .forms import *
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.views import LoginView
-from django.urls import path
+
+
 
 #Usuarios
 
@@ -23,9 +23,6 @@ class UsuarioCreate(CreateView):
         messages.success(self.request, "El usuario ha sido creado y guardado exitosamente.")
         return super().form_valid(form)
 
-
-
-    
 def home(request):
     return render(request, 'home.html')
 
@@ -130,16 +127,7 @@ class MedicoDelete(DeleteView):
     
 # Citas
 
-class CitaCreate(CreateView):
-    model = Citas
-    form_class = CitaForm
-    template_name = 'cita_form.html'
-    success_url = reverse_lazy('lista_citas')
-    
-    def form_valid(self, form):
-        messages.success(self.request, "la cita ha sido asignada exitosamente.")
-        return super().form_valid(form)
-    
+
 class CitasLista(ListView):
     model = Citas
     template_name = 'citas_list.html'  
@@ -211,5 +199,78 @@ class RegistroCitaListView(ListView):
         historia_clinica_id = self.kwargs.get("historia_clinica_id")
         return RegistroCita.objects.filter(historia_clinica_id=historia_clinica_id)
 
+class AgendaCreateView(CreateView):
+    model = Agenda
+    form_class = AgendaForm
+    template_name = 'agenda_form.html'
+    success_url = reverse_lazy('listar_medicos')  # Define la URL de redirección
 
+    def form_valid(self, form):
+        messages.success(self.request, "La agenda ha sido registrada exitosamente.")
+        return super().form_valid(form)
     
+# class CitaCreate(CreateView):
+#     model = Citas
+#     form_class = CitaForm
+#     template_name = 'cita_form.html'
+#     success_url = reverse_lazy('lista_citas')
+
+#     def get_form_kwargs(self):
+#         # Llama al método padre para obtener los argumentos base
+#         kwargs = super().get_form_kwargs()
+
+#         # Obtiene los parámetros 'medico' y 'fecha' de la URL
+#         medico_id = self.request.GET.get('medico')
+#         fecha = self.request.GET.get('fecha')
+
+#         # Agrega estos parámetros a kwargs
+#         if medico_id:
+#             kwargs['medico_id'] = medico_id  # Se envía al formulario como argumento
+#         if fecha:
+#             kwargs['fecha'] = fecha  # También se envía al formulario como argumento
+
+#         return kwargs
+    
+
+
+class CitaCreate(CreateView):
+    model = Citas
+    form_class = CitaForm
+    template_name = 'cita_form.html'
+    success_url = reverse_lazy('lista_citas')
+
+    def get_form_kwargs(self):
+        # Llama al método padre para obtener los argumentos base
+        kwargs = super().get_form_kwargs()
+
+        # Obtiene los parámetros 'medico' y 'fecha' de la URL
+        medico_id = self.request.GET.get('medico')
+        fecha = self.request.GET.get('fecha')
+
+        # Agrega estos parámetros a kwargs
+        if medico_id:
+            kwargs['medico_id'] = medico_id  # Se envía al formulario como argumento
+        if fecha:
+            kwargs['fecha'] = fecha  # También se envía al formulario como argumento
+
+        return kwargs
+
+
+def obtener_horas_disponibles(request):
+        medico_id = request.GET.get('medico')
+        fecha = request.GET.get('fecha')
+
+        try:
+            agenda = Agenda.objects.get(medico_id=medico_id, fecha=fecha)
+            horarios = agenda.horarios.all()
+            data = {
+                'horas': [
+                    {
+                        'hora': str(horario.hora),
+                        'disponible': horario.disponible
+                    } for horario in horarios
+                ]
+            }
+            return JsonResponse(data)
+        except Agenda.DoesNotExist:
+            return JsonResponse({'horas': []})

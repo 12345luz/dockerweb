@@ -1,0 +1,70 @@
+{% extends 'adminlte/base.html' %}
+
+{% block content %}
+<h3>Registrar Agenda Médica</h3>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="form-horizontal">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.medico.id_for_label }}">Médico</label>
+              {{ form.medico.errors }}
+              {{ form.medico }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.fecha.id_for_label }}">Fecha</label>
+              {{ form.fecha.errors }}
+              {{ form.fecha }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.hora_inicio.id_for_label }}">Hora de Inicio</label>
+              {{ form.hora_inicio.errors }}
+              {{ form.hora_inicio }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.hora_fin.id_for_label }}">Hora de Fin</label>
+              {{ form.hora_fin.errors }}
+              {{ form.hora_fin }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.intervalo.id_for_label }}">Intervalo (minutos)</label>
+              {{ form.intervalo.errors }}
+              {{ form.intervalo }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button type="submit" class="btn btn-primary" style="width: 100px;">
+            <i class="fas fa-save"></i> Guardar
+          </button>
+          <a href="{% url 'listar_medicos' %}" class="btn btn-secondary" style="width: 100px;">
+            <i class="fas fa-times"></i> Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -81,6 +81,30 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"{self.primer_nombre} {self.primer_apellido}"
+    
+    def __str__(self):
+        return f"{self.primer_nombre} {self.primer_apellido}"
+    
+    def clean_text(self, text):
+       
+        text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
+        return text.upper()
+    
+    def save(self, *args, **kwargs):
+        # Validar antes de guardar
+        self.clean()
+
+        # Transformar los datos al formato deseado
+        if self.primer_apellido:
+            self.primer_apellido = self.clean_text(self.primer_apellido)
+        if self.segundo_apellido:
+            self.segundo_apellido = self.clean_text(self.segundo_apellido)
+        if self.primer_nombre:
+            self.primer_nombre = self.clean_text(self.primer_nombre)
+        if self.segundo_nombre:
+            self.segundo_nombre = self.clean_text(self.segundo_nombre)
+
+        super().save(*args, **kwargs)
     def edad(self):
         if self.fecha_nacimiento:
             hoy = date.today()
@@ -129,6 +153,42 @@ class Medico(models.Model):
 
         super().save(*args, **kwargs)
 
+from datetime import timedelta, datetime
+
+
+class HorarioCita(models.Model):
+    agenda = models.ForeignKey('Agenda', on_delete=models.CASCADE, related_name='horarios')
+    hora = models.TimeField()
+    disponible = models.BooleanField(default=True)  # Define si la hora está disponible
+
+    def __str__(self):
+        return f"{self.hora} - {'Disponible' if self.disponible else 'Ocupado'}"
+
+class Agenda(models.Model):
+    medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
+    fecha = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    intervalo = models.IntegerField(default=30)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        # Borrar horarios existentes para evitar duplicados
+        self.horarios.all().delete()
+        
+        # Generar nuevos horarios
+        hora_actual = datetime.combine(self.fecha, self.hora_inicio)
+        hora_fin = datetime.combine(self.fecha, self.hora_fin)
+        while hora_actual < hora_fin:
+            HorarioCita.objects.create(
+                agenda=self,
+                hora=hora_actual.time(),
+                disponible=True
+            )
+            hora_actual += timedelta(minutes=self.intervalo)
+
+
 class Citas(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="citas")
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, related_name="citas")
@@ -160,6 +220,16 @@ class Citas(models.Model):
                 observaciones=observaciones
             )
 
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+            # Marcar la hora como ocupada
+        HorarioCita.objects.filter(
+            agenda__medico=self.medico,
+            agenda__fecha=self.fecha_cita,
+            hora=self.hora_cita
+        ).update(disponible=False)
 class HistoriaClinica(models.Model):
     usuario = models.OneToOneField(
         Usuario, on_delete=models.CASCADE, related_name="historia_clinica"
