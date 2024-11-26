@@ -120,22 +120,25 @@ class CitaForm(forms.ModelForm):
         fields = ['usuario', 'medico', 'fecha_cita', 'hora_cita', 'motivo_consulta', 'estado', 'asistio']
 
     def __init__(self, *args, **kwargs):
-        # Extrae los argumentos adicionales del constructor
         medico_id = kwargs.pop('medico_id', None)
         fecha = kwargs.pop('fecha', None)
 
         super().__init__(*args, **kwargs)
 
-        # Si se pasa un médico y una fecha, carga las horas disponibles
+        # Definir las opciones de 'hora_cita' dinámicamente
         if medico_id and fecha:
             try:
                 agenda = Agenda.objects.get(medico_id=medico_id, fecha=fecha)
                 horarios = agenda.horarios.filter(disponible=True)
-                self.fields['hora_cita'].choices = [(str(horario.hora), str(horario.hora)) for horario in horarios]
-
-                # Imprimir en consola las opciones cargadas
-                print("Opciones de hora_cita cargadas:", self.fields['hora_cita'].choices)
-
+                self.fields['hora_cita'].choices = [
+                    (horario.hora.strftime('%H:%M:%S'), horario.hora.strftime('%H:%M:%S'))
+                    for horario in horarios
+                ]
             except Agenda.DoesNotExist:
                 self.fields['hora_cita'].choices = []
 
+    def clean_hora_cita(self):
+        hora_cita = self.cleaned_data.get('hora_cita')
+        if hora_cita not in dict(self.fields['hora_cita'].choices):
+            raise forms.ValidationError("La hora seleccionada no es válida.")
+        return hora_cita

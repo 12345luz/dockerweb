@@ -209,30 +209,6 @@ class AgendaCreateView(CreateView):
         messages.success(self.request, "La agenda ha sido registrada exitosamente.")
         return super().form_valid(form)
     
-# class CitaCreate(CreateView):
-#     model = Citas
-#     form_class = CitaForm
-#     template_name = 'cita_form.html'
-#     success_url = reverse_lazy('lista_citas')
-
-#     def get_form_kwargs(self):
-#         # Llama al método padre para obtener los argumentos base
-#         kwargs = super().get_form_kwargs()
-
-#         # Obtiene los parámetros 'medico' y 'fecha' de la URL
-#         medico_id = self.request.GET.get('medico')
-#         fecha = self.request.GET.get('fecha')
-
-#         # Agrega estos parámetros a kwargs
-#         if medico_id:
-#             kwargs['medico_id'] = medico_id  # Se envía al formulario como argumento
-#         if fecha:
-#             kwargs['fecha'] = fecha  # También se envía al formulario como argumento
-
-#         return kwargs
-    
-
-
 class CitaCreate(CreateView):
     model = Citas
     form_class = CitaForm
@@ -240,19 +216,14 @@ class CitaCreate(CreateView):
     success_url = reverse_lazy('lista_citas')
 
     def get_form_kwargs(self):
-        # Llama al método padre para obtener los argumentos base
         kwargs = super().get_form_kwargs()
-
-        # Obtiene los parámetros 'medico' y 'fecha' de la URL
-        medico_id = self.request.GET.get('medico')
-        fecha = self.request.GET.get('fecha')
-
-        # Agrega estos parámetros a kwargs
-        if medico_id:
-            kwargs['medico_id'] = medico_id  # Se envía al formulario como argumento
-        if fecha:
-            kwargs['fecha'] = fecha  # También se envía al formulario como argumento
-
+        # Extraer `medico` y `fecha` de la solicitud
+        if self.request.method == "GET":
+            kwargs['medico_id'] = self.request.GET.get('medico')
+            kwargs['fecha'] = self.request.GET.get('fecha')
+        elif self.request.method == "POST":
+            kwargs['medico_id'] = self.request.POST.get('medico')
+            kwargs['fecha'] = self.request.POST.get('fecha_cita')
         return kwargs
 
 

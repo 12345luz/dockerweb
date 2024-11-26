@@ -1,82 +1,94 @@
-{% extends 'adminlte/base.html' %}
-
-{% block content %}
-<h3>Formulario De Citas </h3>
+{% extends 'adminlte/base.html' %} {% block content %}
+<h3>Formulario De Citas</h3>
 <div class="container mt-4">
   <div class="card">
     <div class="card-body">
       <form method="post" enctype="multipart/form-data" class="form-horizontal">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger">
-            {{ form.non_field_errors }}
-          </div>
+        {% csrf_token %} {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
         {% endif %}
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.usuario.id_for_label }}" class="form-label">Paciente (Número de Identificación)</label>
-              {{ form.usuario.errors }}
-              {{ form.usuario }}
-            </div>
-          </div>
-          
-          <div class="col-md-6 mb-3">
-            <div class="form-group">
-              <label for="{{ form.medico.id_for_label }}" class="form-label">Médico</label>
-              {{ form.medico.errors }}
-              {{ form.medico }}
+              <label for="{{ form.usuario.id_for_label }}" class="form-label"
+                >Paciente (Número de Identificación)</label
+              >
+              {{ form.usuario.errors }} {{ form.usuario }}
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.fecha_cita.id_for_label }}" class="form-label">Fecha de la Cita</label>
-              {{ form.fecha_cita.errors }}
-              {{ form.fecha_cita }}
+              <label for="{{ form.medico.id_for_label }}" class="form-label"
+                >Médico</label
+              >
+              {{ form.medico.errors }} {{ form.medico }}
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.hora_cita.id_for_label }}" class="form-label">Hora de la Cita</label>
-             {{ form.hora_cita.errors }} 
-              {{ form.hora_cita }}
+              <label for="{{ form.fecha_cita.id_for_label }}" class="form-label"
+                >Fecha de la Cita</label
+              >
+              {{ form.fecha_cita.errors }} {{ form.fecha_cita }}
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.motivo_consulta.id_for_label }}" class="form-label">Motivo de la Consulta</label>
-              {{ form.motivo_consulta.errors }}
-              {{ form.motivo_consulta }}
+              <label for="{{ form.hora_cita.id_for_label }}" class="form-label"
+                >Hora de la Cita</label
+              >
+              {{ form.hora_cita.errors }} {{ form.hora_cita }}
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.estado.id_for_label }}" class="form-label">Estado</label>
-              {{ form.estado.errors }}
-              {{ form.estado }}
+              <label
+                for="{{ form.motivo_consulta.id_for_label }}"
+                class="form-label"
+                >Motivo de la Consulta</label
+              >
+              {{ form.motivo_consulta.errors }} {{ form.motivo_consulta }}
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="{{ form.asistio.id_for_label }}" class="form-label">¿Asistió?</label>
-              {{ form.asistio.errors }}
-              {{ form.asistio }}
+              <label for="{{ form.estado.id_for_label }}" class="form-label"
+                >Estado</label
+              >
+              {{ form.estado.errors }} {{ form.estado }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="{{ form.asistio.id_for_label }}" class="form-label"
+                >¿Asistió?</label
+              >
+              {{ form.asistio.errors }} {{ form.asistio }}
             </div>
           </div>
         </div>
 
         <div class="mt-4 text-center">
-          <button type="submit" class="btn btn-primary  d-inline-block mr-2" style="width: 100px;">
-              <i class="fas fa-save"></i> Guardar
+          <button
+            type="submit"
+            class="btn btn-primary d-inline-block mr-2"
+            style="width: 100px"
+          >
+            <i class="fas fa-save"></i> Guardar
           </button>
-          <a href="{% url 'listar_medicos' %}" class="btn btn-secondary  d-inline-block" style="width: 100px;">
-              <i class="fas fa-times"></i> Cancelar
+          <a
+            href="{% url 'listar_medicos' %}"
+            class="btn btn-secondary d-inline-block"
+            style="width: 100px"
+          >
+            <i class="fas fa-times"></i> Cancelar
           </a>
         </div>
       </form>
@@ -84,44 +96,47 @@
   </div>
 </div>
 
-
-
-
 <script>
-    function updateHorasDisponibles() {
-      var medicoId = document.getElementById('id_medico').value;
-      var fecha = document.getElementById('id_fecha_cita').value;
+  function updateHorasDisponibles() {
+    var horaSelect = document.getElementById("id_hora_cita");
+    var medicoId = document.getElementById("id_medico").value;
+    var fecha = document.getElementById("id_fecha_cita").value;
 
-      if (medicoId && fecha) {
-          var url = "{% url 'obtener_horas_disponibles' %}?medico=" + medicoId + "&fecha=" + fecha;
+    if (!medicoId || !fecha) {
+      console.warn(
+        "Médico o fecha no seleccionados. No se pueden cargar horarios."
+      );
+      horaSelect.innerHTML =
+        "<option value=''>Seleccione un horario válido</option>";
+      return;
+    }
 
-          fetch(url)
-          .then(response => response.json())
-          .then(data => {
-              var horaSelect = document.getElementById('id_hora_cita');
-              horaSelect.innerHTML = "";  // Limpiar las opciones existentes
-      
-              data.horas.forEach(function(horario) {
-                var option = document.createElement('option');
-                option.value = horario.hora; // El valor debe coincidir con lo definido en el backend
-                option.textContent = horario.hora; // Formato de texto visible
-                if (!horario.disponible) {
-                    option.disabled = true;
-                }
-                horaSelect.appendChild(option);
-            });
-          });
-      
-      }
+    var url = "/horas-disponibles/?medico=" + medicoId + "&fecha=" + fecha;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        horaSelect.innerHTML = "";
+
+        data.horas.forEach(function (horario) {
+          var option = document.createElement("option");
+          option.value = horario.hora;
+          option.textContent = horario.hora;
+          if (!horario.disponible) {
+            option.disabled = true;
+          }
+          horaSelect.appendChild(option);
+        });
+      })
+      .catch((error) => console.error("Error al cargar los horarios:", error));
   }
 
-  document.getElementById('id_medico').addEventListener('change', updateHorasDisponibles);
-  document.getElementById('id_fecha_cita').addEventListener('change', updateHorasDisponibles);
-
+  document
+    .getElementById("id_medico")
+    .addEventListener("change", updateHorasDisponibles);
+  document
+    .getElementById("id_fecha_cita")
+    .addEventListener("change", updateHorasDisponibles);
 </script>
 
 {% endblock %}
-
-
-
-
